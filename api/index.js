@@ -7,9 +7,7 @@ import cors from "cors";
 dotenv.config();
 
 //I need apllication string
-mongoose.connect(
-  "mongodb+srv://hyemee1021:JangP9941!@mern-realestate.9npdhyd.mongodb.net/?retryWrites=true&w=majority&appName=mern-realestate"
-);
+mongoose.connect(process.env.MONGO);
 
 const app = express();
 //allowing json form as input
