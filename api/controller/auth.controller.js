@@ -72,7 +72,7 @@ export const google = async (req, res, next) => {
       const generatedPassword = Math.random().toString(36).slice(-8);
       //0.89743hfr- getting last 8 digit
 
-      const hashedPassword = bcryptjs.hashSync(generatedPassword, salt);
+      const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
 
       const newUser = new User({
         username:
