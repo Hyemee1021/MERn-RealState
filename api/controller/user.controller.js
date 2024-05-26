@@ -1,5 +1,40 @@
+import User from "../models/user.model.js";
+import { errorHandler } from "../utils/error.js";
+import bcryptjs from "bcryptjs";
 export const test = (req, res) => {
   res.json({
     message: " Hello test World",
   });
+};
+
+export const updateUser = async (req, res, next) => {
+  //req.user is coming from verifyUser
+  if (req.user.id !== req.params.id)
+    return next(errorHandler(401, " You can only update your own account"));
+
+  try {
+    //when an user tried to update user
+    if (req.body.password)
+      req.body.password = bcryptjs.hashSync(req.body.password, 10);
+
+    //by using set method its ok to send data not fulfilled
+
+    const updateUSer = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          username: req.body.username,
+          email: req.body.email,
+          password: req.body.password,
+          avatar: req.body.avatar,
+        },
+      },
+      { new: true }
+      //showing new updated info
+    );
+
+    const { password, ...rest } = updateUSer._doc;
+  } catch (error) {
+    next(error);
+  }
 };

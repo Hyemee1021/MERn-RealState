@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 dotenv.config();
 
 //I need apllication string
@@ -19,6 +20,8 @@ mongoose
 const app = express();
 //allowing json form as input
 app.use(express.json());
+
+app.use(cookieParser());
 
 const corsOptions = {
   origin: true,
