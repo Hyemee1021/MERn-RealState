@@ -26,54 +26,38 @@ export const signup = async (req, res, next) => {
 
 export const signin = async (req, res, next) => {
   const { email, password } = req.body;
-
   try {
-    //when key and value's names are the same, I can put one
     const validUser = await User.findOne({ email });
-    //When there is some error in find a user in dataase,
-    //error middleware will handle it
-    if (!validUser) return next(errorHandler(404, " User is not found"));
-    //if there is a user I can compare password from frontend and
-    //password from database
+    if (!validUser) return next(errorHandler(404, "User not found!"));
     const validPassword = bcryptjs.compareSync(password, validUser.password);
-
-    if (!validPassword) return next(errorHandler, "Wrong credentials");
-    //create a jwt token-hashed userId
-    const token = jwt.sign({ id: validUser.id }, process.env.JWT_SECRET);
+    if (!validPassword) return next(errorHandler(401, "Wrong credentials!"));
+    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
     const { password: pass, ...rest } = validUser._doc;
-    //save the token as a cookie-and send it to user without password
     res
       .cookie("access_token", token, { httpOnly: true })
       .status(200)
       .json(rest);
   } catch (error) {
-    //this is coming from index.js
     next(error);
   }
 };
-
 //I request to get random_id and username and rest from google
 
 export const google = async (req, res, next) => {
   try {
-    //i get email from
     const user = await User.findOne({ email: req.body.email });
-
     if (user) {
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-
-      const { passwrod: pass, ...rest } = user._doc;
-
+      const { password: pass, ...rest } = user._doc;
       res
         .cookie("access_token", token, { httpOnly: true })
         .status(200)
         .json(rest);
     } else {
-      const generatedPassword = Math.random().toString(36).slice(-8);
-      //0.89743hfr- getting last 8 digit
-
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
       const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
-
       const newUser = new User({
         username:
           req.body.name.split(" ").join("").toLowerCase() +
@@ -91,6 +75,6 @@ export const google = async (req, res, next) => {
         .json(rest);
     }
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };

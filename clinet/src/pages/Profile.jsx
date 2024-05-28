@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useRef } from "react";
 import {
@@ -8,9 +8,22 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase.js";
+//slice + dispatch
+import {
+  updateUserFailure,
+  updateUserStart,
+  updateUserSuccess,
+  deleteUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+} from "../resux/user/userSlice.js";
+
+import { useDispatch } from "react-redux";
 export default function Profile() {
   const fileRef = useRef(null);
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, loading, error } = useSelector((state) => state.user);
+  console.log("1" + currentUser, "2" + loading, "3" + error);
+  //file is  upload piacture
   const [file, setFile] = useState(undefined);
   //file give me point numbers
   const [filePerc, setFilePerc] = useState(0);
@@ -20,6 +33,8 @@ export default function Profile() {
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   console.log(formData);
+  const dispatch = useDispatch();
+
   const handleFileUpload = (file) => {
     // this app from firebase.js
     const storage = getStorage(app);
@@ -49,6 +64,56 @@ export default function Profile() {
     );
   };
 
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      //based on id of input -
+      [e.target.id]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+
+      dispatch(updateUserSuccess(data));
+    } catch (error) {
+      dispatch(updateUserFailure(error.message));
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data));
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
+    }
+  };
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
@@ -59,7 +124,7 @@ export default function Profile() {
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
 
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4 " onSubmit={handleSubmit}>
         {/* //can choose only one file */}
         <input
           ref={fileRef}
@@ -91,13 +156,17 @@ export default function Profile() {
         <input
           type="text"
           placeholder="username"
+          defaultValue={currentUser.username}
           className="border p-3 rounded-lg"
           id="username"
+          onChange={handleChange}
         />
         <input
           type="email"
           placeholder="email"
           className="border p-3 rounded-lg"
+          defaultValue={currentUser.email}
+          onChange={handleChange}
           id="email"
         />
         <input
@@ -105,14 +174,20 @@ export default function Profile() {
           placeholder="password"
           className="border p-3 rounded-lg"
           id="password"
+          onChange={handleChange}
         />
         <button className="bg-slate-700 text-white p-3 uppercase hover:opacity-90 rounded-lg disabled:opacity-80 ">
-          Update
+          {loading ? " Loading.." : " Update"}
         </button>
       </form>
 
       <div className=" flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete Account</span>
+        <span
+          onClick={handleDeleteUser}
+          className="text-red-700 cursor-pointer"
+        >
+          Delete Account
+        </span>
         <span className="text-red-700 cursor-pointer">Sign Out</span>
       </div>
     </div>
