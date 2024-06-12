@@ -29,12 +29,13 @@ export default function Profile() {
   console.log("1" + currentUser, "2" + loading, "3" + error);
   //file is  upload piacture
   const [file, setFile] = useState(undefined);
-  //file give me point numbers
+  //filePer shows percentage of uploading
   const [filePerc, setFilePerc] = useState(0);
   console.log(file);
   console.log(filePerc);
 
   const [fileUploadError, setFileUploadError] = useState(false);
+  //personal details, photo etc will store in formData
   const [formData, setFormData] = useState({});
   console.log(formData);
   const dispatch = useDispatch();
@@ -47,6 +48,7 @@ export default function Profile() {
     const storageRef = ref(storage, fileName);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
+    //i will see progress percentage
     uploadTask.on(
       "state_changed",
       (snapshot) => {
@@ -58,6 +60,7 @@ export default function Profile() {
         setFileUploadError(true);
       },
       () => {
+        //get filr from firbase.js
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
           setFormData({
             ...formData,
@@ -133,6 +136,7 @@ export default function Profile() {
       dispatch(signOutUserFailure(error.message));
     }
   };
+
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
@@ -145,6 +149,7 @@ export default function Profile() {
 
       <form className="flex flex-col gap-4 " onSubmit={handleSubmit}>
         {/* //can choose only one file */}
+        {/* input will be hidden but im using useRef so image can refernce this input */}
         <input
           ref={fileRef}
           type="file"

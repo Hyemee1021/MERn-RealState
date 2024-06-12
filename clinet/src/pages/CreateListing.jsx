@@ -1,5 +1,3 @@
-import React from "react";
-
 export const CreateListing = () => {
   return (
     <main className="p-3 max-w-4xl mx-auto">
@@ -73,6 +71,17 @@ export const CreateListing = () => {
               <input
                 className="p-1 border border-gray-300 rounded-lg "
                 type="number"
+                id="bathrooms"
+                min="1"
+                max="10"
+                required
+              />
+              <p>Baths</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <input
+                className="p-1 border border-gray-300 rounded-lg "
+                type="number"
                 id="regularPrice"
                 min="1"
                 max="10"
@@ -98,17 +107,6 @@ export const CreateListing = () => {
                 <p>Discounted Price</p>
                 <span className="text-xs">($ / month)</span>
               </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <input
-                className="p-1 border border-gray-300 rounded-lg "
-                type="number"
-                id="bathrooms"
-                min="1"
-                max="10"
-                required
-              />
-              <p>Baths</p>
             </div>
           </div>
         </div>
