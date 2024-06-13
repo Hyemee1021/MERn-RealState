@@ -13,7 +13,7 @@ export const verifyToken = (req, res, next) => {
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return next(errorHandler(403, "Not allowed"));
     //user is from cookie-id send it to next
-    req.user = user;
+    req.user = user; //send id->next function as request
     next();
   });
 };
