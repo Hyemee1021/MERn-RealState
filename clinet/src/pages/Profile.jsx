@@ -37,7 +37,7 @@ export default function Profile() {
   const [fileUploadError, setFileUploadError] = useState(false);
   //personal details, photo etc will store in formData
   const [formData, setFormData] = useState({});
-  console.log(formData);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
   const dispatch = useDispatch();
 
   const handleFileUpload = (file) => {
@@ -100,6 +100,7 @@ export default function Profile() {
       }
 
       dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
     } catch (error) {
       dispatch(updateUserFailure(error.message));
     }
@@ -226,6 +227,9 @@ export default function Profile() {
         </span>
       </div>
       <p className="text-red-700 mt-5">{error ? error : ""}</p>
+      <p className="text-green-700 mt-5">
+        {updateSuccess ? "User is updated successfully" : ""}
+      </p>
     </div>
   );
 }
