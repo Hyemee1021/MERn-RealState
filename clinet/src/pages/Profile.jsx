@@ -81,7 +81,7 @@ export default function Profile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    //dispatch to update state
     try {
       dispatch(updateUserStart());
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
@@ -200,7 +200,10 @@ export default function Profile() {
           id="password"
           onChange={handleChange}
         />
-        <button className="bg-slate-700 text-white p-3 uppercase hover:opacity-90 rounded-lg disabled:opacity-80 ">
+        <button
+          disabled={loading}
+          className="bg-slate-700 text-white p-3 uppercase hover:opacity-90 rounded-lg disabled:opacity-80 "
+        >
           {loading ? " Loading.." : " Update"}
         </button>
         <Link
@@ -222,6 +225,7 @@ export default function Profile() {
           Sign Out
         </span>
       </div>
+      <p className="text-red-700 mt-5">{error ? error : ""}</p>
     </div>
   );
 }
