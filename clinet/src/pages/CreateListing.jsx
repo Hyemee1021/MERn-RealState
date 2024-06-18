@@ -18,17 +18,13 @@ export const CreateListing = () => {
             placeholder="Address"
             className="border p-3 rounded-lg"
             id="address"
-            maxLength="62"
-            minLength="10"
             required
           />
-          <input
+          <textarea
             type="text"
             placeholder="Description"
             className="border p-3 rounded-lg"
             id="description"
-            maxLength="62"
-            minLength="10"
             required
           />
 
