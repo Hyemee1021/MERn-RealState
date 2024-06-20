@@ -52,7 +52,7 @@ export const CreateListing = () => {
           </div>
 
           <div className="flex flex-wrap gap-6">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <input
                 className="p-1 border border-gray-300 rounded-lg "
                 type="number"
@@ -110,7 +110,7 @@ export const CreateListing = () => {
           <p className="font-semibold">
             Images:
             <span className="font-normal text-gray-600 ml-2 ">
-              The first inage will be the cover (max 6)
+              The first image will be the cover (max 6)
             </span>
           </p>
           <div className="flex gap-4">
@@ -118,7 +118,7 @@ export const CreateListing = () => {
               className="border p-3 border-gray-300 rounded w-full "
               type="file"
               id="images"
-              accept="inmages/*"
+              accept="images/*"
               multiple
             />
             <button className="p-3 text-green-700 border border-green-600 hover:shadow-lg  rounded uppercase disabled:opcacity-80">
@@ -126,7 +126,7 @@ export const CreateListing = () => {
             </button>
           </div>
           <button className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-80 disabled:opacity-70">
-            Create List
+            Create Listing
           </button>
         </div>
       </form>
