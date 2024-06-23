@@ -17,6 +17,7 @@ function App() {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/about" element={<About />} />
+
         {/* private route */}
         <Route element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />

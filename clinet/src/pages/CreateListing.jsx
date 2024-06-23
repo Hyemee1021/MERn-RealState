@@ -1,4 +1,101 @@
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { useState } from "react";
+import { app } from "../firebase";
+import { set } from "mongoose";
+
 export const CreateListing = () => {
+  //storing photos
+  const [files, setFiles] = useState([]);
+  //uploaded image URLs
+  const [formData, setFormData] = useState({
+    imageUrls: [],
+  });
+  console.log(formData);
+  const [imageUploadError, setImageUploadError] = useState(false);
+
+  const [uploading, setUploading] = useState(false);
+  const handleImageSubmit = (e) => {
+    //e.preventDefault -> for submiting a form
+
+    if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
+      //limit number of photos 6
+      //I need several promises since I need to upload one by one
+      setUploading(true);
+      setImageUploadError(false);
+      const promises = [];
+
+      // Iterate through selected files and initiate upload
+      for (let i = 0; i < files.length; i++) {
+        promises.push(storeImage(files[i])); // Store each image
+      }
+
+      //   // Wait for all uploads to complete
+      Promise.all(promises)
+        .then((urls) => {
+          // Update formData with uploaded image URLs
+          setFormData({
+            ...formData,
+            imageUrls: formData.imageUrls.concat(urls),
+          });
+          setImageUploadError(false);
+          setUploading(false);
+        })
+
+        .catch((error) => {
+          setImageUploadError("Imagae upload failed");
+          setUploading(false);
+          // Handle errors here if needed
+        });
+    } else {
+      setImageUploadError("You can only upload 6 images.");
+      setUploading(false);
+    }
+  };
+  //upload to fire storage
+  const storeImage = async (file) => {
+    return new Promise((resolve, reject) => {
+      // Get Firebase Storage instance
+      const storage = getStorage(app);
+      // Generate unique filename
+      const fileName = new Date().getTime() + file.name;
+      // Create a reference to the file in Storage
+      const storageRef = ref(storage, fileName);
+      // Initiate upload task
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      // Track upload progress (optional)
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        },
+        (error) => {
+          reject(error);
+        },
+        () => {
+          // Upload completed successfully
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            resolve(downloadURL);
+            // Get download URL of the uploaded file
+            // Resolve promise with download URL
+          });
+        }
+      );
+    });
+  };
+
+  const handleRemoveImage = (index) => {
+    setFormData({
+      ...formData,
+      imageUrls: formData.imageUrls.filter((_, i) => i !== index),
+    });
+  };
   return (
     <main className="p-3 max-w-4xl mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">CreateListing</h1>
@@ -115,16 +212,47 @@ export const CreateListing = () => {
           </p>
           <div className="flex gap-4">
             <input
+              onChange={(e) => setFiles(e.target.files)}
               className="border p-3 border-gray-300 rounded w-full "
               type="file"
               id="images"
               accept="images/*"
               multiple
             />
-            <button className="p-3 text-green-700 border border-green-600 hover:shadow-lg  rounded uppercase disabled:opcacity-80">
-              Upload
+            <button
+              //I want to just submit photo
+              type="button"
+              disabled={uploading}
+              onClick={handleImageSubmit}
+              className="p-3 text-green-700 border border-green-600 hover:shadow-lg  rounded uppercase disabled:opcacity-80"
+            >
+              {uploading ? "Uploading..." : "Upload"}
             </button>
           </div>
+
+          <p className="text-red-700 text-xs">{imageUploadError}</p>
+
+          {formData.imageUrls.length > 0 &&
+            formData.imageUrls.map((url, index) => (
+              <div
+                key={url}
+                className="flex justify-between p-3 border-item-center"
+              >
+                <img
+                  src={url}
+                  alt="Listing image"
+                  className="w-20 h-20 object-contain rounded-md"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveImage(index)}
+                  className="p-3 text-red-700 rounded-lg"
+                >
+                  {" "}
+                  Delete
+                </button>
+              </div>
+            ))}
           <button className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-80 disabled:opacity-70">
             Create Listing
           </button>
