@@ -8,8 +8,10 @@ import { useState } from "react";
 import { app } from "../firebase";
 import { set } from "mongoose";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export const CreateListing = () => {
+  const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   //storing photos
   const [files, setFiles] = useState([]);
@@ -153,9 +155,7 @@ export const CreateListing = () => {
     try {
       if (formData.imageUrls.length < 1)
         return setError("You must upload at least one image.");
-      //+ will make data to nnumber before doing any add
-      if (+formData.regularPrice < +formData.discountPrice);
-      return setError("Discount price must be lower than regular price");
+      //+ will make data to snnumber before doing any add
 
       setLoading(true);
       setError(false);
@@ -175,6 +175,8 @@ export const CreateListing = () => {
       if (data.success === false) {
         setError(data.message);
       }
+
+      navigate(`/listing/${data._id}`);
     } catch (error) {
       setError(error.message);
       setLoading(false);
@@ -319,6 +321,7 @@ export const CreateListing = () => {
                 <span className="text-xs">($ / month)</span>
               </div>
             </div>
+
             <div className="flex items-center gap-3">
               <input
                 className="p-1 border border-gray-300 rounded-lg "
@@ -388,7 +391,10 @@ export const CreateListing = () => {
                 </button>
               </div>
             ))}
-          <button className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-80 disabled:opacity-70">
+          <button
+            disabled={loading || uploading}
+            className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-80 disabled:opacity-70"
+          >
             {loading ? "Creating ..." : "Create listing"}
           </button>
           {error && <p className="text-xs text-red-700">{error}</p>}
