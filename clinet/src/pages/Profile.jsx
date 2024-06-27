@@ -26,18 +26,19 @@ import { useDispatch } from "react-redux";
 export default function Profile() {
   const fileRef = useRef(null);
   const { currentUser, loading, error } = useSelector((state) => state.user);
-  console.log("1" + currentUser, "2" + loading, "3" + error);
+  console.log(currentUser);
   //file is  upload piacture
   const [file, setFile] = useState(undefined);
   //filePer shows percentage of uploading
   const [filePerc, setFilePerc] = useState(0);
-  console.log(file);
-  console.log(filePerc);
 
   const [fileUploadError, setFileUploadError] = useState(false);
   //personal details, photo etc will store in formData
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [showListingError, setShowListingError] = useState(false);
+  const [userListings, setUserListings] = useState([]);
+  console.log(userListings);
   const dispatch = useDispatch();
 
   const handleFileUpload = (file) => {
@@ -138,6 +139,25 @@ export default function Profile() {
     }
   };
 
+  const handleShowListings = async () => {
+    try {
+      //clean previous error
+      setShowListingError(false);
+      const res = await fetch(`/api/user/listings/${currentUser._id}`);
+      const data = await res.json();
+
+      if (data.success === false) {
+        setShowListingError(true);
+
+        return;
+      }
+      console.log(data);
+      setUserListings(data);
+    } catch (error) {
+      setShowListingError(true);
+    }
+  };
+
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
@@ -230,6 +250,26 @@ export default function Profile() {
       <p className="text-green-700 mt-5">
         {updateSuccess ? "User is updated successfully" : ""}
       </p>
+      <button onClick={handleShowListings} className="text-green-700 w-full">
+        Show Listing
+      </button>
+      <p className="text-red-700">
+        {showListingError ? "There is error in showing listings." : ""}
+      </p>
+      {userListings &&
+        userListings.length > 0 &&
+        //userListing is array
+        userListings.map((listing) => (
+          <div key={listing._id} className="">
+            <Link to={`/listing/${listing._id}`}>
+              <img
+                src={listing.imgUrls[0]}
+                alt="listing cover"
+                className="h-16 w-16 object-contain"
+              />
+            </Link>
+          </div>
+        ))}
     </div>
   );
 }
