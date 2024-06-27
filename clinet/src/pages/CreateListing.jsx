@@ -153,6 +153,8 @@ export const CreateListing = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      //lets see it clear previous error
+      setError(false);
       if (formData.imageUrls.length < 1)
         return setError("You must upload at least one image.");
       //+ will make data to snnumber before doing any add
