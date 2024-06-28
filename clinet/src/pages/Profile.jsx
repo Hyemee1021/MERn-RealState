@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
-import { useRef } from "react";
+
 import { Link } from "react-router-dom";
 import {
   getDownloadURL,
@@ -23,10 +23,11 @@ import {
 } from "../resux/user/userSlice.js";
 
 import { useDispatch } from "react-redux";
+
 export default function Profile() {
   const fileRef = useRef(null);
   const { currentUser, loading, error } = useSelector((state) => state.user);
-  console.log(currentUser);
+
   //file is  upload piacture
   const [file, setFile] = useState(undefined);
   //filePer shows percentage of uploading
@@ -146,15 +147,16 @@ export default function Profile() {
       const res = await fetch(`/api/user/listings/${currentUser._id}`);
       const data = await res.json();
 
-      if (data.success === false) {
+      if (!Array.isArray(data)) {
         setShowListingError(true);
-
+        console.error("Data is not an array:", data); // Log if data is not an array
         return;
       }
-      console.log(data);
       setUserListings(data);
+      console.log("User listings updated:", userListings);
     } catch (error) {
       setShowListingError(true);
+      console.error("Error fetching listings:", error);
     }
   };
 
@@ -250,12 +252,18 @@ export default function Profile() {
       <p className="text-green-700 mt-5">
         {updateSuccess ? "User is updated successfully" : ""}
       </p>
-      <button onClick={handleShowListings} className="text-green-700 w-full">
+      <button
+        type="button"
+        onClick={handleShowListings}
+        className="text-green-700 w-full"
+      >
         Show Listing
       </button>
-      <p className="text-red-700">
+
+      <p className="text-red-700 mt-1">
         {showListingError ? "There is error in showing listings." : ""}
       </p>
+
       {userListings &&
         userListings.length > 0 &&
         //userListing is array
@@ -263,7 +271,12 @@ export default function Profile() {
           <div key={listing._id} className="">
             <Link to={`/listing/${listing._id}`}>
               <img
-                src={listing.imgUrls[0]}
+                src={
+                  (listing.imageUrls &&
+                    listing.imageUrls.length > 0 &&
+                    listing.imageUrls[0]) ||
+                  "https://via.placeholder.com/150"
+                }
                 alt="listing cover"
                 className="h-16 w-16 object-contain"
               />
