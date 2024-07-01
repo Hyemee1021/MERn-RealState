@@ -4,14 +4,15 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { app } from "../firebase";
 import { set } from "mongoose";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export const CreateListing = () => {
+export const UpdateListing = () => {
   const navigate = useNavigate();
+  const params = useParams();
   const { currentUser } = useSelector((state) => state.user);
   //storing photos
   const [files, setFiles] = useState([]);
@@ -39,6 +40,14 @@ export const CreateListing = () => {
 
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const fetchListing = async () => {
+      const listingId = params.listingId;
+      console.log(listingId);
+    };
+
+    fetchListing();
+  }, []);
   const handleImageSubmit = (e) => {
     //e.preventDefault -> for submiting a form
 
@@ -194,7 +203,7 @@ export const CreateListing = () => {
   return (
     <main className="p-3 max-w-4xl mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">
-        Create Listing
+        Update Listing
       </h1>
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
         <div className="flex flex-col gap-4 p-4 flex-1">
