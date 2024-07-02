@@ -43,7 +43,15 @@ export const UpdateListing = () => {
   useEffect(() => {
     const fetchListing = async () => {
       const listingId = params.listingId;
-      console.log(listingId);
+      const res = await fetch(`/api/listing/get/${listingId}`);
+      const data = await res.json();
+
+      if (data.success === false) {
+        console.log(data.message);
+        return;
+      }
+
+      setFormData(data);
     };
 
     fetchListing();
@@ -171,7 +179,7 @@ export const UpdateListing = () => {
       setLoading(true);
       setError(false);
 
-      const res = await fetch("/api/listing/create", {
+      const res = await fetch(`/api/listing/update/${params.listingId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -408,7 +416,7 @@ export const UpdateListing = () => {
             disabled={loading || uploading}
             className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-80 disabled:opacity-70"
           >
-            {loading ? "Creating ..." : "Create listing"}
+            {loading ? "Updating ..." : "Updating listing"}
           </button>
           {error && <p className="text-xs text-red-700">{error}</p>}
         </div>
