@@ -20,8 +20,10 @@ export const Listing = () => {
           setLoading(false);
           return;
         }
-
+        console.log(data);
         setListing(data);
+        console.log(listing);
+        setLoading(false);
       } catch (error) {
         setError(true);
         setLoading(false);
@@ -30,5 +32,17 @@ export const Listing = () => {
 
     fetchListing();
   });
-  return <div>Listing</div>;
+  return (
+    <div>
+      {loading && <p>Loading...</p>}
+      {error && <p>Error occurred while fetching data.</p>}
+      {listing && (
+        <div>
+          <h2>{listing.title}</h2>
+          <p>{listing.description}</p>
+          {/* Render other details as needed */}
+        </div>
+      )}
+    </div>
+  );
 };
