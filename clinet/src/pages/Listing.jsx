@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import SwiperCore from "swiper";
+import { Navigation } from "swiper/modules";
+import "swiper/css/bundle";
+
 export const Listing = () => {
+  SwiperCore.use([Navigation]);
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -20,10 +26,11 @@ export const Listing = () => {
           setLoading(false);
           return;
         }
-        console.log(data);
+
         setListing(data);
-        console.log(listing);
+        console.log(listing.name);
         setLoading(false);
+        setError(false);
       } catch (error) {
         setError(true);
         setLoading(false);
@@ -31,18 +38,33 @@ export const Listing = () => {
     };
 
     fetchListing();
-  });
+  }, [params.listingId]);
+  // 7:39
   return (
-    <div>
-      {loading && <p>Loading...</p>}
-      {error && <p>Error occurred while fetching data.</p>}
-      {listing && (
+    <main>
+      {loading && <p className="text-center my-7 text-2xl">Loading...</p>}
+      {error && (
+        <p className="text-center my-7 text-2xl">
+          Error occurred while fetching data.
+        </p>
+      )}
+      {listing && !loading && !error && (
         <div>
-          <h2>{listing.title}</h2>
-          <p>{listing.description}</p>
-          {/* Render other details as needed */}
+          <Swiper navigation>
+            {listing.imageUrls.map((url) => (
+              <SwiperSlide key={url}>
+                <div
+                  className="h-[550px]"
+                  style={{
+                    background: `url(${url}) center no-repeat`,
+                    backgroundSize: "contain",
+                  }}
+                ></div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
       )}
-    </div>
+    </main>
   );
 };
