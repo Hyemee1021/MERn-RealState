@@ -5,10 +5,11 @@ import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import Profile from "./pages/Profile";
 import Header from "./components/Header";
+import { Listing } from "./pages/Listing";
 import PrivateRoute from "./components/PrivateRoute";
 import { CreateListing } from "./pages/CreateListing";
 import { UpdateListing } from "./pages/UpdateListing";
-import { Listing } from "./pages/Listing";
+
 function App() {
   return (
     <BrowserRouter>
