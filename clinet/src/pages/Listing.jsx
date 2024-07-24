@@ -15,6 +15,7 @@ import {
   FaParking,
   FaShare,
 } from "react-icons/fa";
+import Contact from "../components/Contact";
 export const Listing = () => {
   SwiperCore.use([Navigation]);
   const [listing, setListing] = useState(null);
@@ -118,6 +119,11 @@ export const Listing = () => {
               )}
             </div>
 
+            <p className="text-slate-800">
+              <span className="font-semibold text-black">Description - </span>
+              {listing.description}
+            </p>
+
             <ul className="text-green-900 font-semibold text-sm flex flex-wrap items-center gap-4 sm:gap-6">
               <li className="flex items-center gap-1 whitespace-nowrap ">
                 <FaBed className="text-lg" />
@@ -140,6 +146,17 @@ export const Listing = () => {
                 {listing.furnished ? "Furnished" : "Unfurnished"}
               </li>
             </ul>
+
+            {currentUser && listing.userRef !== currentUser._id && !contact && (
+              <button
+                onClick={() => setContact(true)}
+                className="bg-slate-700 text-white rounded-lg uppercase hover:opacity-80 p-3"
+              >
+                Contact
+              </button>
+            )}
+
+            <Contact listing={listing} />
           </div>
         </div>
       )}
