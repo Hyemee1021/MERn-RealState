@@ -26,6 +26,7 @@ export const Listing = () => {
   const params = useParams();
 
   const { currentUser } = useSelector((state) => state.user);
+
   useEffect(() => {
     const fetchListing = async () => {
       try {
@@ -155,8 +156,7 @@ export const Listing = () => {
                 Contact
               </button>
             )}
-
-            <Contact listing={listing} />
+            {contact && <Contact listing={listing} />}
           </div>
         </div>
       )}
