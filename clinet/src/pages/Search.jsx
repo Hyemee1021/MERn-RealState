@@ -5,7 +5,7 @@ export const Search = () => {
 
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState([]);
-
+  //9:33
   console.log(listings);
   const [sidebardata, setSidebardata] = useState({
     searchTerm: "",
@@ -110,6 +110,7 @@ export const Search = () => {
     fetchListing();
   }, [location.search]);
   return (
+    //9:36
     <div className="flex flex-col md:flex-row">
       <div className="p-7 border-b-2 md:border-r-2 md:min-h-screen">
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
@@ -220,7 +221,17 @@ export const Search = () => {
         </form>
       </div>
       <div>
-        <h1>Listing Results:</h1>
+        <h1 className=" text-center text-3xl w-full font-semibold border-b p-3 text-slate-700 mt-5">
+          Listing Results:
+        </h1>
+        <div className="p-7 flex flex-col gap-4">
+          {!loading && listings.length === 0 && (
+            <p className="text-xl text-slate-700">No Listing Found!</p>
+          )}
+          {loading && (
+            <p className="text-center text-xl text-slate-700 ">Loading...</p>
+          )}
+        </div>
       </div>
     </div>
   );
