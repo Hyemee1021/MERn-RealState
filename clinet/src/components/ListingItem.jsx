@@ -21,6 +21,25 @@ export const ListingItem = ({ listing }) => {
           <p className="text-sm text-gray-600 line-clamp-2">
             {listing.description}
           </p>
+          <p className="text-slate-700 font-bold">
+            $
+            {listing.offer
+              ? listing.discountPrice.toLocaleString("en-US")
+              : listing.regularPrice.toLocaleString("en-US")}
+            {listing.type === "rent" && "/month"}
+          </p>
+          <div className="text-slate-700 flex gap-4">
+            <div className="font-bold text-xs">
+              {listing.bedrooms > 1
+                ? `${listing.bedrooms} beds`
+                : `${listing.bedrooms} bed`}
+            </div>
+            <div className="font-bold text-xs">
+              {listing.bathrooms > 1
+                ? `${listing.bathrooms} baths`
+                : `${listing.bathrooms} bath`}
+            </div>
+          </div>
         </div>
       </Link>
     </div>
