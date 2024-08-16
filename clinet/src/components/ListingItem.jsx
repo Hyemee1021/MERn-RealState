@@ -1,12 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { MdLocationOn } from "react-icons/md";
+import imgCover from "../assets/logo.jpg";
 export const ListingItem = ({ listing }) => {
   return (
     <div className="bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden rounded-sm w-full sm:w-[330px]">
       <Link to={`/listing/${listing._id}`}>
         <img
-          src={listing.imageUrls[0]}
+          src={listing.imageUrls[0] || imgCover}
           alt="listing cover"
           className="h-[320px] sm:h-[220px] w-full object-cover hover:scale-105 transition-scale duration-200"
         />
