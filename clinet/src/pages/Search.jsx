@@ -132,6 +132,7 @@ export const Search = () => {
     }
     setListings([...listings, ...data]);
   };
+  //10:14:04
   return (
     //9:36
     <div className="flex flex-col md:flex-row">
